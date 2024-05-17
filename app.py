@@ -42,7 +42,7 @@ st.image(logo_path, width=200)
 
 st.title('Analyse des mots français avec suppression de lettres basée sur le nombre de syllabes')
 
-file_path = 'C:/Users/khrib/OneDrive/Bureau/stage_clinicog/tri_longeur_sylla/liste_francais.txt'
+file_path = './liste_francais.txt'
 
 df_results = load_and_process_words(file_path)
 
