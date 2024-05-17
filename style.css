@@ -1,0 +1,44 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.stApp {
+    background-color: #100d0d98;
+}
+
+.stDataFrame div {
+    overflow: auto;
+}
+
+.stDataFrame table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stDataFrame th, .stDataFrame td {
+    border: 1px solid #060000;
+    padding: 8px;
+}
+
+.stDataFrame tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.stDataFrame tr:hover {
+    background-color: #ddd;
+}
+
+.stDataFrame th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #046808;
+    color: white;
+}
+
+.stDataFrame td input {
+    width: 100%;
+    border: none;
+    background: transparent;
+}
