@@ -51,7 +51,7 @@ local_css("style.css")
 # Main app
 st.sidebar.image('images/logo1.png', width=200)
 
-st.title('Analyse des mots français avec suppression de lettres basée sur le nombre de syllabes')
+st.title('Les mots français avec suppression de lettres basée sur le nombre de syllabes')
 
 file_path = './liste_francais.txt'
 df_results = load_and_process_words(file_path)
