@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import random
+import io
 
 # Helper functions
 def count_syllables(word):
@@ -56,25 +57,47 @@ st.title('Analyse des mots français avec suppression de lettres basée sur le n
 file_path = './liste_francais.txt'
 df_results = load_and_process_words(file_path)
 
-level_to_view = st.selectbox('Sélectionnez le niveau (basé sur le nombre de syllabes) à afficher :', 
-                             options=range(1, df_results["Niveau (Nombre de Syllabes)"].max() + 1), index=0)
+# Sidebar filters
+st.sidebar.header("Filtres")
 
-df_filtered = df_results[df_results["Niveau (Nombre de Syllabes)"] == level_to_view]
+# Filter by number of syllables
+syllable_options = list(range(1, df_results["Niveau (Nombre de Syllabes)"].max() + 1))
+level_to_view = st.sidebar.selectbox('Sélectionnez le niveau (basé sur le nombre de syllabes) à afficher :', 
+                                     options=syllable_options, index=0)
 
-# Ensure session state persistence for edited data
-if 'edited_df' not in st.session_state:
-    st.session_state.edited_df = df_filtered.copy()
+# Filter by number of letters
+letter_options = list(range(1, df_results["Nombre de Lettres"].max() + 1))
+letters_to_view = st.sidebar.selectbox('Sélectionnez le nombre de lettres à afficher :', 
+                                       options=letter_options, index=0)
 
-edited_df = st.session_state.edited_df
+# Button to apply filters and load the filtered data
+if st.sidebar.button("Charger la liste filtrée"):
+    df_filtered = df_results[(df_results["Niveau (Nombre de Syllabes)"] == level_to_view) & 
+                             (df_results["Nombre de Lettres"] == letters_to_view)]
+    st.session_state.filtered_df = df_filtered.copy()
 
-# Use st.data_editor to make the table fully interactive and editable
-st.data_editor(edited_df, use_container_width=True)
+# Load filtered data from session state
+if 'filtered_df' in st.session_state:
+    edited_df = st.session_state.filtered_df
+    st.write("### Liste filtrée des mots")
 
-# Provide an option to download the updated DataFrame
-csv = edited_df.to_csv(index=False).encode('utf-8')
-st.download_button(
-    "Télécharger les données filtrées et mises à jour en CSV",
-    csv,
-    "mots_modifies_niveau.csv",
-    "text/csv"
-)
+    # Use st.data_editor to make the table fully interactive and editable
+    edited_df = st.data_editor(edited_df, use_container_width=True, num_rows="dynamic")
+    
+    st.session_state.edited_df = edited_df
+
+    # Button to download the updated DataFrame
+    chosen_words = edited_df[edited_df['Choisi par le Clinicien'] == True]
+
+    # Save chosen words to an Excel file
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        chosen_words.to_excel(writer, index=False, sheet_name='Sheet1')
+    processed_data = output.getvalue()
+
+    st.sidebar.download_button(
+        label="Télécharger les mots choisis et leurs réponses en Excel",
+        data=processed_data,
+        file_name="mots_choisis_reponses.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
