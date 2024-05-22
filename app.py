@@ -49,16 +49,13 @@ def local_css(file_name):
 local_css("style.css")
 
 # Main app
-logo_path = 'images/logo1.png'
-st.image(logo_path, width=200)
+st.sidebar.image('images/logo1.png', width=200)
 
 st.title('Analyse des mots français avec suppression de lettres basée sur le nombre de syllabes')
 
 file_path = './liste_francais.txt'
 df_results = load_and_process_words(file_path)
 
-# Sidebar filters
-st.sidebar.header("Filtres")
 
 # Filter by number of syllables
 syllable_options = list(range(1, df_results["Niveau (Nombre de Syllabes)"].max() + 1))
